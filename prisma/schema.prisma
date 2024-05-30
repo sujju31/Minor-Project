@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+ provider          = "postgresql"
+ url               = env("DATABASE_URL")
+ directUrl         = env("DIRECT_URL")
+}
+
+
+model Post {
+  id           String        @default(cuid()) @id
+  title        String
+  description  String
+  lastDate     DateTime
+  status       String        @default("active")
+  image        String
+  skills       String
+  eligibility  String
+  shortDescription String
+  ctc          String
+  jobLocation  String
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  updatedAt    DateTime      @updatedAt @map(name: "updated_at")
+  applied      Applied[]     @relation("PostApplications")
+}
+
+model Applied {
+  id           String        @default(cuid()) @id
+  username     String
+  about        String
+  email        String
+  percentage   String
+  postId       String        @map("post_id")
+  post         Post          @relation("PostApplications", fields: [postId], references: [id])
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  updatedAt    DateTime      @updatedAt @map(name: "updated_at")
+}
+
+model User {
+  id            String       @default(cuid()) @id
+  email         String       @unique
+  username      String
+  password      String
+  admin         Boolean     @default(false)
+  createdAt     DateTime     @default(now()) @map(name: "created_at")
+  updatedAt     DateTime     @updatedAt @map(name: "updated_at")
+  @@map(name: "users")
+}
